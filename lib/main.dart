@@ -15,7 +15,7 @@ void main() async {
   Stripe.publishableKey = 'pk_test_51QZuooF3y7cUPl2iZY5bNioUkzOVwJ1kRiBD7oJEac1UaIONQgDxODmB70lwzKAAkBhlZo46blwlhZCNom3skDjq00OkXHomT6'; // Replace with your publishable key
   await Firebase.initializeApp(); // Initialize Firebase
   await Stripe.instance.applySettings(); // Apply Stripe settings
-  runApp(MyApp()); // Run the app
+  runApp(MyApp());
 }
 
 
@@ -41,9 +41,9 @@ class MyApp extends StatelessWidget {
         minTextAdapt: true, // Ensures text scales properly
 
         builder: (context, child) {
-          return MaterialApp(
+          return const MaterialApp(
             debugShowCheckedModeBanner: false,
-            home: ProductDetailScreen(),
+            home: LoginScreen(),
           );
         },
       ),

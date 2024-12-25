@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:food_cart/main.dart'; // Assuming your main app file
-import 'package:food_cart/screens/product_screen.dart'; // Assuming your product list screen
+import 'package:food_cart/main.dart';
+import 'package:food_cart/screens/product_screen.dart';
 import 'package:provider/provider.dart';
-import '../provider/product_detail_provider.dart'; // Assuming your product details provider
+import '../provider/product_detail_provider.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -14,36 +14,39 @@ class ProductDetailScreen extends StatefulWidget {
 
 class _ProductDetailScreenState extends State<ProductDetailScreen> {
   Map<String, dynamic>? paymentIntent;
-  String paymentMessage = ''; // To display payment status
+  String paymentMessage = '';
 
-  Future<void> makePayment(double amount, String currency) async {
+  Future<void> makePayment(double amount) async {
     try {
-      // Convert amount to cents (integer) on the client-side
+      // Convert the amount to cents for Stripe (integer value required)
       final int amountInCents = (amount * 100).toInt();
 
       final response = await http.post(
         Uri.parse('https://api.stripe.com/v1/payment_intents'),
-        headers: {'Content-Type': 'application/json'}, // Important: Set content type
-        body: jsonEncode({
-          'amount': amountInCents, // Send integer amount
-          'currency': currency.toLowerCase(), // Convert currency to lowercase
-        }),
+        headers: {
+          'Authorization': 'Bearer <your_secret_key>',
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: {
+          'amount': amountInCents.toString(),
+          'currency': 'Rs.',
+        },
       );
 
       if (response.statusCode != 200) {
         // Handle server errors
         print('Server error: ${response.statusCode}, ${response.body}');
-        throw Exception('Failed to create payment intent on server'); // Throw an exception
+        throw Exception('Failed to create payment intent on server');
       }
 
       final jsonResponse = jsonDecode(response.body);
-      paymentIntent = jsonResponse['paymentIntent'];
+      paymentIntent = jsonResponse;
 
       await Stripe.instance.initPaymentSheet(
         paymentSheetParameters: SetupPaymentSheetParameters(
           paymentIntentClientSecret: paymentIntent!['client_secret'],
-          style: ThemeMode.light, // Adjust theme as needed
-          merchantDisplayName: 'Your Merchant Name',
+          style: ThemeMode.light,
+          merchantDisplayName: 'Infinity Store',
         ),
       );
 
@@ -57,7 +60,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
     }
   }
 
-  displayPaymentSheet(double amount) async {
+  void displayPaymentSheet(double amount) async {
     try {
       await Stripe.instance.presentPaymentSheet().then((value) {
         setState(() {
@@ -81,7 +84,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
       showDialog(
         context: context,
         builder: (_) => const AlertDialog(
-          content: Text("Cancelled "),
+          content: Text("Payment Cancelled"),
         ),
       );
     } catch (e) {
@@ -89,17 +92,14 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
     }
   }
 
-  calculateAmount(double amount) {
-    final calculatedAmount = (amount * 100).toInt();
-    return calculatedAmount.toString();
+  @override
+  void initState() {
+    super.initState();
+    Stripe.publishableKey =
+    '<pk_test_51QZuooF3y7cUPl2iZY5bNioUkzOVwJ1kRiBD7oJEac1UaIONQgDxODmB70lwzKAAkBhlZo46blwlhZCNom3skDjq00OkXHomT6>';
+    Stripe.instance.applySettings();
   }
 
-  @override
-  void initState() async {
-    super.initState();
-    Stripe.publishableKey = '<pk_test_51QZuooF3y7cUPl2iZY5bNioUkzOVwJ1kRiBD7oJEac1UaIONQgDxODmB70lwzKAAkBhlZo46blwlhZCNom3skDjq00OkXHomT6';
-    await Stripe.instance.applySettings();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -267,6 +267,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                             SizedBox(height: 16.h),
                             Text(productDetail.description),
                             SizedBox(height: 24.h),
+
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
@@ -276,15 +277,10 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                 ),
                                 ElevatedButton(
                                   onPressed: () async {
-                                    // Get the product price from productDetail
                                     final double price = productDetail.price;
-
-                                    // Calculate amount in cents (Stripe expects integer)
-                                    final int amountInCents = (price * 100).toInt();
-
                                     try {
                                       // Initiate payment with Stripe
-                                      await makePayment(amountInCents as double, 'Rs.'); // Assuming currency is INR
+                                      await makePayment(price);
                                     } catch (e) {
                                       print('Error initiating payment: $e');
                                       ScaffoldMessenger.of(context).showSnackBar(
