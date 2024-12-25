@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:food_cart/provider/login_provider.dart';
 import 'package:food_cart/provider/product_detail_provider.dart';
 import 'package:food_cart/provider/product_provider.dart';
@@ -10,11 +11,13 @@ import 'package:food_cart/screens/product_screen.dart';
 import 'package:provider/provider.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized(); // Important for Firebase
-  await Firebase.initializeApp(
-  );
-  runApp(MyApp());
+  WidgetsFlutterBinding.ensureInitialized(); // Important for Firebase and Stripe
+  Stripe.publishableKey = 'pk_test_51QZuooF3y7cUPl2iZY5bNioUkzOVwJ1kRiBD7oJEac1UaIONQgDxODmB70lwzKAAkBhlZo46blwlhZCNom3skDjq00OkXHomT6'; // Replace with your publishable key
+  await Firebase.initializeApp(); // Initialize Firebase
+  await Stripe.instance.applySettings(); // Apply Stripe settings
+  runApp(MyApp()); // Run the app
 }
+
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
