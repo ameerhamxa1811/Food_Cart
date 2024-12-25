@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "697401367198",
+    "project_id": "food-cart-bf35b",
+    "storage_bucket": "food-cart-bf35b.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:697401367198:android:31d0bde16603f28245f98f",
+        "android_client_info": {
+          "package_name": "com.example.food_cart"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA_VFZItzYWIdvFqcGsYUF0YZYeAZS-fHg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
