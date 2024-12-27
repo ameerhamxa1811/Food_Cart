@@ -57,14 +57,14 @@ class StripePayment {
         throw Exception('Failed to create payment intent: ${response.body}');
       }
 
-      final jsonResponse = jsonDecode(response.body);
-      return jsonResponse;
+      return jsonDecode(response.body);
     } catch (e) {
       print("Error creating payment intent: $e");
       rethrow;
     }
   }
 
+  /// Initializes the Stripe Payment Sheet
   Future<void> initPaymentSheet({
     required String paymentIntentClientSecret,
   }) async {
@@ -72,7 +72,7 @@ class StripePayment {
       await Stripe.instance.initPaymentSheet(
         paymentSheetParameters: SetupPaymentSheetParameters(
           paymentIntentClientSecret: paymentIntentClientSecret,
-          merchantDisplayName: 'Your App Name', // Customize this
+          merchantDisplayName: 'Food Cart', // Customize this
         ),
       );
     } catch (e) {
@@ -81,6 +81,7 @@ class StripePayment {
     }
   }
 
+  /// Displays the Payment Sheet to the user
   Future<bool> displayPaymentSheet() async {
     try {
       await Stripe.instance.presentPaymentSheet();
