@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:food_cart/main.dart';
 import 'package:food_cart/screens/product_screen.dart';
 import 'package:provider/provider.dart';
 import '../provider/product_detail_provider.dart';
@@ -19,29 +18,35 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
   Future<void> makePayment(double amount) async {
     try {
       // Convert the amount to cents for Stripe (integer value required)
+      print('Converting amount to cents...');
       final int amountInCents = (amount * 100).toInt();
+      print('Amount in cents: $amountInCents');
 
+      print('Sending request to Stripe API...');
       final response = await http.post(
         Uri.parse('https://api.stripe.com/v1/payment_intents'),
         headers: {
-          'Authorization': 'Bearer <your_secret_key>',
+          'Authorization': 'Bearer sk_test_51QZuooF3y7cUPl2i4QFPu1jTeLaP2t241kg0KQqXvLcSzVQcHcRLARXKfqb35N6cdtJSAJPTVnBY7nUZ0n4AGP8j00JJAroaJ6',
           'Content-Type': 'application/x-www-form-urlencoded',
         },
         body: {
-          'amount': amountInCents.toString(),
-          'currency': 'Rs.',
+          'amount': (amountInCents * 100).toString(),
+          'currency': 'pkr',
         },
       );
 
+      print('Stripe API response received. Status code: ${response.statusCode}');
       if (response.statusCode != 200) {
-        // Handle server errors
         print('Server error: ${response.statusCode}, ${response.body}');
         throw Exception('Failed to create payment intent on server');
       }
 
+      print('Parsing response...');
       final jsonResponse = jsonDecode(response.body);
       paymentIntent = jsonResponse;
+      print('Payment intent created: $paymentIntent');
 
+      print('Initializing payment sheet...');
       await Stripe.instance.initPaymentSheet(
         paymentSheetParameters: SetupPaymentSheetParameters(
           paymentIntentClientSecret: paymentIntent!['client_secret'],
@@ -50,8 +55,10 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
         ),
       );
 
+      print('Payment sheet initialized. Displaying payment sheet...');
       displayPaymentSheet(amount);
     } catch (e) {
+      print('Error in makePayment: $e');
       setState(() {
         paymentMessage = "Error: $e";
       });
@@ -62,7 +69,9 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
 
   void displayPaymentSheet(double amount) async {
     try {
+      print('Presenting payment sheet...');
       await Stripe.instance.presentPaymentSheet().then((value) {
+        print('Payment successful!');
         setState(() {
           paymentMessage = "Payment of Rs.$amount Successful";
         });
@@ -71,16 +80,16 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
         ));
         paymentIntent = null;
       }).onError((error, stackTrace) {
+        print('Error presenting payment sheet: $error $stackTrace');
         setState(() {
           paymentMessage = "Payment Failed";
         });
-        print('Error is:--->$error $stackTrace');
       });
     } on StripeException catch (e) {
+      print('StripeException: Payment cancelled. Error: $e');
       setState(() {
         paymentMessage = "Payment Cancelled";
       });
-      print('Error is:---> $e');
       showDialog(
         context: context,
         builder: (_) => const AlertDialog(
@@ -88,7 +97,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
         ),
       );
     } catch (e) {
-      print('$e');
+      print('Unexpected error: $e');
     }
   }
 
@@ -99,7 +108,6 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
     '<pk_test_51QZuooF3y7cUPl2iZY5bNioUkzOVwJ1kRiBD7oJEac1UaIONQgDxODmB70lwzKAAkBhlZo46blwlhZCNom3skDjq00OkXHomT6>';
     Stripe.instance.applySettings();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -212,7 +220,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                   ],
                 ),
                 Positioned(
-                  top: screenHeight * 0.42, // Adjust to overlap the top container
+                  top: screenHeight * 0.42,
                   left: 0,
                   right: 0,
                   child: Container(

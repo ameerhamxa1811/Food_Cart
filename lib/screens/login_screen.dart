@@ -85,9 +85,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   // color: Colors.amberAccent,
                   child: Column(
                     children: [
-                      Container(
-                        height: screenHeight * 48/812.h,
-                        width: screenWidth * 339/375.w,
+                      SizedBox(
+                        height: 48.h,
+                        // width: screenWidth * 339/375.w,
                         // color: Colors.pink,
                     child: TextFormField(
                       controller: _emailController,
