@@ -25,12 +25,12 @@ class ProductDetailProvider extends ChangeNotifier {
   final ProductDetail _productDetail = ProductDetail(
     name: 'Meatballs',
     description:
-    'Lorem ipsum dolor sit amet, consectetur adipisicing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip',
-    price: 22.65,
+        'Lorem ipsum dolor sit amet, consectetur adipisicing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip',
+    price: 1000,
     image:
-    'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/Spaghetti_and_meatballs_3.jpg/1280px-Spaghetti_and_meatballs_3.jpg', // Replace with your image URL
+        'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/Spaghetti_and_meatballs_3.jpg/1280px-Spaghetti_and_meatballs_3.jpg', // Replace with your image URL
     rating: 4.9,
-    time: '10-15 min',
+    time: '10-20 min',
   );
 
   ProductDetail get productDetail => _productDetail;

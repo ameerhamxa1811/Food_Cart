@@ -1,113 +1,116 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:food_cart/screens/product_screen.dart';
+import 'package:food_cart/static/stripe_payment.dart';
 import 'package:provider/provider.dart';
 import '../provider/product_detail_provider.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+
 class ProductDetailScreen extends StatefulWidget {
   @override
   State<ProductDetailScreen> createState() => _ProductDetailScreenState();
 }
 
 class _ProductDetailScreenState extends State<ProductDetailScreen> {
-  Map<String, dynamic>? paymentIntent;
-  String paymentMessage = '';
+  // Map<String, dynamic>? paymentIntent;
+  // String paymentMessage = '';
 
-  Future<void> makePayment(double amount) async {
-    try {
-      // Convert the amount to cents for Stripe (integer value required)
-      print('Converting amount to cents...');
-      final int amountInCents = (amount * 100).toInt();
-      print('Amount in cents: $amountInCents');
+  // Future<void> makePayment(double amount) async {
+  //   try {
+  //     // Convert the amount to cents for Stripe (integer value required)
+  //     print('Converting amount to cents...');
+  //     final int amountInCents = (amount * 100).toInt();
+  //     print('Amount in cents: $amountInCents');
 
-      print('Sending request to Stripe API...');
-      final response = await http.post(
-        Uri.parse('https://api.stripe.com/v1/payment_intents'),
-        headers: {
-          'Authorization': 'Bearer sk_test_51QZuooF3y7cUPl2i4QFPu1jTeLaP2t241kg0KQqXvLcSzVQcHcRLARXKfqb35N6cdtJSAJPTVnBY7nUZ0n4AGP8j00JJAroaJ6',
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: {
-          'amount': (amountInCents * 100).toString(),
-          'currency': 'pkr',
-        },
-      );
+  //     print('Sending request to Stripe API...');
+  //     final response = await http.post(
+  //       Uri.parse('https://api.stripe.com/v1/payment_intents'),
+  //       headers: {
+  //         'Authorization': 'Bearer sk_test_51QZuooF3y7cUPl2i4QFPu1jTeLaP2t241kg0KQqXvLcSzVQcHcRLARXKfqb35N6cdtJSAJPTVnBY7nUZ0n4AGP8j00JJAroaJ6',
+  //         'Content-Type': 'application/x-www-form-urlencoded',
+  //       },
+  //       body: {
+  //         'amount': (amountInCents * 100).toString(),
+  //         'currency': 'pkr',
+  //       },
+  //     );
 
-      print('Stripe API response received. Status code: ${response.statusCode}');
-      if (response.statusCode != 200) {
-        print('Server error: ${response.statusCode}, ${response.body}');
-        throw Exception('Failed to create payment intent on server');
-      }
+  //     print('Stripe API response received. Status code: ${response.statusCode}');
+  //     if (response.statusCode != 200) {
+  //       print('Server error: ${response.statusCode}, ${response.body}');
+  //       throw Exception('Failed to create payment intent on server');
+  //     }
 
-      print('Parsing response...');
-      final jsonResponse = jsonDecode(response.body);
-      paymentIntent = jsonResponse;
-      print('Payment intent created: $paymentIntent');
+  //     print('Parsing response...');
+  //     final jsonResponse = jsonDecode(response.body);
+  //     paymentIntent = jsonResponse;
+  //     print('Payment intent created: $paymentIntent');
 
-      print('Initializing payment sheet...');
-      await Stripe.instance.initPaymentSheet(
-        paymentSheetParameters: SetupPaymentSheetParameters(
-          paymentIntentClientSecret: paymentIntent!['client_secret'],
-          style: ThemeMode.light,
-          merchantDisplayName: 'Infinity Store',
-        ),
-      );
+  //     print('Initializing payment sheet...');
+  //     await Stripe.instance.initPaymentSheet(
+  //       paymentSheetParameters: SetupPaymentSheetParameters(
+  //         paymentIntentClientSecret: paymentIntent!['client_secret'],
+  //         style: ThemeMode.light,
+  //         merchantDisplayName: 'Infinity Store',
+  //       ),
+  //     );
 
-      print('Payment sheet initialized. Displaying payment sheet...');
-      displayPaymentSheet(amount);
-    } catch (e) {
-      print('Error in makePayment: $e');
-      setState(() {
-        paymentMessage = "Error: $e";
-      });
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Error: $e")));
-      print('Exception/DISPLAYPAYMENTSHEET==> $e');
-    }
-  }
+  //     print('Payment sheet initialized. Displaying payment sheet...');
+  //     displayPaymentSheet(amount);
+  //   } catch (e) {
+  //     print('Error in makePayment: $e');
+  //     setState(() {
+  //       paymentMessage = "Error: $e";
+  //     });
+  //     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Error: $e")));
+  //     print('Exception/DISPLAYPAYMENTSHEET==> $e');
+  //   }
+  // }
 
-  void displayPaymentSheet(double amount) async {
-    try {
-      print('Presenting payment sheet...');
-      await Stripe.instance.presentPaymentSheet().then((value) {
-        print('Payment successful!');
-        setState(() {
-          paymentMessage = "Payment of Rs.$amount Successful";
-        });
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text("Payment of Rs.$amount Successful"),
-        ));
-        paymentIntent = null;
-      }).onError((error, stackTrace) {
-        print('Error presenting payment sheet: $error $stackTrace');
-        setState(() {
-          paymentMessage = "Payment Failed";
-        });
-      });
-    } on StripeException catch (e) {
-      print('StripeException: Payment cancelled. Error: $e');
-      setState(() {
-        paymentMessage = "Payment Cancelled";
-      });
-      showDialog(
-        context: context,
-        builder: (_) => const AlertDialog(
-          content: Text("Payment Cancelled"),
-        ),
-      );
-    } catch (e) {
-      print('Unexpected error: $e');
-    }
-  }
+  // void displayPaymentSheet(double amount) async {
+  //   try {
+  //     print('Presenting payment sheet...');
+  //     await Stripe.instance.presentPaymentSheet().then((value) {
+  //       print('Payment successful!');
+  //       setState(() {
+  //         paymentMessage = "Payment of Rs.$amount Successful";
+  //       });
+  //       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+  //         content: Text("Payment of Rs.$amount Successful"),
+  //       ));
+  //       paymentIntent = null;
+  //     }).onError((error, stackTrace) {
+  //       print('Error presenting payment sheet: $error $stackTrace');
+  //       setState(() {
+  //         paymentMessage = "Payment Failed";
+  //       });
+  //     });
+  //   } on StripeException catch (e) {
+  //     print('StripeException: Payment cancelled. Error: $e');
+  //     setState(() {
+  //       paymentMessage = "Payment Cancelled";
+  //     });
+  //     showDialog(
+  //       context: context,
+  //       builder: (_) => const AlertDialog(
+  //         content: Text("Payment Cancelled"),
+  //       ),
+  //     );
+  //   } catch (e) {
+  //     print('Unexpected error: $e');
+  //   }
+  // }
 
-  @override
-  void initState() {
-    super.initState();
-    Stripe.publishableKey =
-    '<pk_test_51QZuooF3y7cUPl2iZY5bNioUkzOVwJ1kRiBD7oJEac1UaIONQgDxODmB70lwzKAAkBhlZo46blwlhZCNom3skDjq00OkXHomT6>';
-    Stripe.instance.applySettings();
-  }
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   Stripe.publishableKey =
+  //   '<pk_test_51QZuooF3y7cUPl2iZY5bNioUkzOVwJ1kRiBD7oJEac1UaIONQgDxODmB70lwzKAAkBhlZo46blwlhZCNom3skDjq00OkXHomT6>';
+  //   Stripe.instance.applySettings();
+  // }
+  final StripePayment stripePayment = StripePayment();
 
   @override
   Widget build(BuildContext context) {
@@ -136,7 +139,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                             width: double.infinity,
                           ),
                           Padding(
-                            padding: EdgeInsets.only(left: 25.w, top: 75.h, right: 25.w),
+                            padding: EdgeInsets.only(
+                                left: 25.w, top: 75.h, right: 25.w),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
@@ -148,12 +152,14 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                     borderRadius: BorderRadius.circular(25.sp),
                                   ),
                                   child: IconButton(
-                                    icon: Icon(Icons.arrow_back, color: Color(0xff2D264B)),
+                                    icon: Icon(Icons.arrow_back,
+                                        color: Color(0xff2D264B)),
                                     onPressed: () {
                                       Navigator.pushReplacement(
                                         context,
                                         MaterialPageRoute(
-                                            builder: (context) => ProductScreen()),
+                                            builder: (context) =>
+                                                ProductScreen()),
                                       );
                                     },
                                   ),
@@ -186,7 +192,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                 Container(
                                   height: 8.h,
                                   width: 8.w,
-                                  margin: EdgeInsets.symmetric(horizontal: 4.sp),
+                                  margin:
+                                      EdgeInsets.symmetric(horizontal: 4.sp),
                                   decoration: const BoxDecoration(
                                     color: Colors.white,
                                     shape: BoxShape.circle,
@@ -195,7 +202,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                 Container(
                                   height: 8.h,
                                   width: 8.w,
-                                  margin: EdgeInsets.symmetric(horizontal: 4.sp),
+                                  margin:
+                                      EdgeInsets.symmetric(horizontal: 4.sp),
                                   decoration: const BoxDecoration(
                                     color: Colors.grey,
                                     shape: BoxShape.circle,
@@ -204,7 +212,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                 Container(
                                   height: 8.h,
                                   width: 8.w,
-                                  margin: EdgeInsets.symmetric(horizontal: 4.sp),
+                                  margin:
+                                      EdgeInsets.symmetric(horizontal: 4.sp),
                                   decoration: const BoxDecoration(
                                     color: Colors.grey,
                                     shape: BoxShape.circle,
@@ -216,7 +225,9 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                         ],
                       ),
                     ),
-                    SizedBox(height: screenHeight * 0.5), // Spacer for the bottom container
+                    SizedBox(
+                        height: screenHeight *
+                            0.5), // Spacer for the bottom container
                   ],
                 ),
                 Positioned(
@@ -236,26 +247,28 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                     child: Padding(
                       padding: EdgeInsets.all(18.sp),
                       child: Container(
-                        height: screenHeight * 336/812.h,
-                        width: screenWidth * 325/375.w,
+                        height: screenHeight * 336 / 812.h,
+                        width: screenWidth * 325 / 375.w,
                         // color: Colors.blue,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
                               productDetail.name,
-                              style: TextStyle(fontSize: 24.sp, fontWeight: FontWeight.bold),
+                              style: TextStyle(
+                                  fontSize: 24.sp, fontWeight: FontWeight.bold),
                             ),
                             Row(
                               children: [
                                 Row(
                                   children: List.generate(
                                     5,
-                                        (index) => Icon(
+                                    (index) => Icon(
                                       Icons.star,
-                                      color: index < productDetail.rating.floor()
-                                          ? Colors.red
-                                          : Colors.grey,
+                                      color:
+                                          index < productDetail.rating.floor()
+                                              ? Colors.red
+                                              : Colors.grey,
                                       size: 16.sp,
                                     ),
                                   ),
@@ -275,24 +288,50 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                             SizedBox(height: 16.h),
                             Text(productDetail.description),
                             SizedBox(height: 24.h),
-
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
                                   'Price\nRs ${productDetail.price}',
-                                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20.sp),
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 20.sp),
                                 ),
                                 ElevatedButton(
                                   onPressed: () async {
-                                    final double price = productDetail.price;
+                                    final double price = productDetail
+                                        .price; // Ensure price is non-null and valid
                                     try {
-                                      // Initiate payment with Stripe
-                                      await makePayment(price);
+                                      // Ensure the price is passed as a string to the makePayment method
+                                      final paymentIntent = await stripePayment
+                                          .makePayment(price: price.toString());
+
+                                      // Initialize the payment sheet with the client secret
+                                      await stripePayment.initPaymentSheet(
+                                        paymentIntentClientSecret:
+                                            paymentIntent['client_secret'],
+                                      );
+
+                                      // Display the payment sheet
+                                      final success = await stripePayment
+                                          .displayPaymentSheet();
+
+                                      // Show a success message upon completion
+                                      if (success) {
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
+                                          SnackBar(
+                                              content:
+                                                  Text("Payment successful!")),
+                                        );
+                                      }
                                     } catch (e) {
+                                      // Handle errors and display them to the user
                                       print('Error initiating payment: $e');
-                                      ScaffoldMessenger.of(context).showSnackBar(
-                                          SnackBar(content: Text("Error: $e")));
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        SnackBar(content: Text("Error: $e")),
+                                      );
                                     }
                                   },
                                   style: ElevatedButton.styleFrom(
@@ -314,7 +353,6 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
               ],
             ),
           );
-
         },
       ),
     );

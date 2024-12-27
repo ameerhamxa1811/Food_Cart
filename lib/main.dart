@@ -8,16 +8,22 @@ import 'package:food_cart/provider/product_provider.dart';
 import 'package:food_cart/screens/login_screen.dart';
 import 'package:food_cart/screens/product_detail_screen.dart';
 import 'package:food_cart/screens/product_screen.dart';
+import 'package:food_cart/static/prefrence.dart';
 import 'package:provider/provider.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized(); // Important for Firebase and Stripe
-  Stripe.publishableKey = 'pk_test_51QZuooF3y7cUPl2iZY5bNioUkzOVwJ1kRiBD7oJEac1UaIONQgDxODmB70lwzKAAkBhlZo46blwlhZCNom3skDjq00OkXHomT6'; // Replace with your publishable key
+  WidgetsFlutterBinding
+      .ensureInitialized(); // Important for Firebase and Stripe
+  Stripe.urlScheme = Preference.urlScheme;
+  Stripe.publishableKey = Preference.publishableKey;
+  Stripe.merchantIdentifier = Preference.merchantIdentifier;
+
+  await Stripe.instance.applySettings();
+  // Replace with your publishable key
   await Firebase.initializeApp(); // Initialize Firebase
-  await Stripe.instance.applySettings(); // Apply Stripe settings
+  // await Stripe.instance.applySettings(); // Apply Stripe settings
   runApp(MyApp());
 }
-
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -41,9 +47,9 @@ class MyApp extends StatelessWidget {
         minTextAdapt: true, // Ensures text scales properly
 
         builder: (context, child) {
-          return const MaterialApp(
+          return MaterialApp(
             debugShowCheckedModeBanner: false,
-            home: LoginScreen(),
+            home: ProductDetailScreen(),
           );
         },
       ),
