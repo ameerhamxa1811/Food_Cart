@@ -14,102 +14,6 @@ class ProductDetailScreen extends StatefulWidget {
 }
 
 class _ProductDetailScreenState extends State<ProductDetailScreen> {
-  // Map<String, dynamic>? paymentIntent;
-  // String paymentMessage = '';
-
-  // Future<void> makePayment(double amount) async {
-  //   try {
-  //     // Convert the amount to cents for Stripe (integer value required)
-  //     print('Converting amount to cents...');
-  //     final int amountInCents = (amount * 100).toInt();
-  //     print('Amount in cents: $amountInCents');
-
-  //     print('Sending request to Stripe API...');
-  //     final response = await http.post(
-  //       Uri.parse('https://api.stripe.com/v1/payment_intents'),
-  //       headers: {
-  //         'Authorization': 'Bearer sk_test_51QZuooF3y7cUPl2i4QFPu1jTeLaP2t241kg0KQqXvLcSzVQcHcRLARXKfqb35N6cdtJSAJPTVnBY7nUZ0n4AGP8j00JJAroaJ6',
-  //         'Content-Type': 'application/x-www-form-urlencoded',
-  //       },
-  //       body: {
-  //         'amount': (amountInCents * 100).toString(),
-  //         'currency': 'pkr',
-  //       },
-  //     );
-
-  //     print('Stripe API response received. Status code: ${response.statusCode}');
-  //     if (response.statusCode != 200) {
-  //       print('Server error: ${response.statusCode}, ${response.body}');
-  //       throw Exception('Failed to create payment intent on server');
-  //     }
-
-  //     print('Parsing response...');
-  //     final jsonResponse = jsonDecode(response.body);
-  //     paymentIntent = jsonResponse;
-  //     print('Payment intent created: $paymentIntent');
-
-  //     print('Initializing payment sheet...');
-  //     await Stripe.instance.initPaymentSheet(
-  //       paymentSheetParameters: SetupPaymentSheetParameters(
-  //         paymentIntentClientSecret: paymentIntent!['client_secret'],
-  //         style: ThemeMode.light,
-  //         merchantDisplayName: 'Infinity Store',
-  //       ),
-  //     );
-
-  //     print('Payment sheet initialized. Displaying payment sheet...');
-  //     displayPaymentSheet(amount);
-  //   } catch (e) {
-  //     print('Error in makePayment: $e');
-  //     setState(() {
-  //       paymentMessage = "Error: $e";
-  //     });
-  //     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Error: $e")));
-  //     print('Exception/DISPLAYPAYMENTSHEET==> $e');
-  //   }
-  // }
-
-  // void displayPaymentSheet(double amount) async {
-  //   try {
-  //     print('Presenting payment sheet...');
-  //     await Stripe.instance.presentPaymentSheet().then((value) {
-  //       print('Payment successful!');
-  //       setState(() {
-  //         paymentMessage = "Payment of Rs.$amount Successful";
-  //       });
-  //       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-  //         content: Text("Payment of Rs.$amount Successful"),
-  //       ));
-  //       paymentIntent = null;
-  //     }).onError((error, stackTrace) {
-  //       print('Error presenting payment sheet: $error $stackTrace');
-  //       setState(() {
-  //         paymentMessage = "Payment Failed";
-  //       });
-  //     });
-  //   } on StripeException catch (e) {
-  //     print('StripeException: Payment cancelled. Error: $e');
-  //     setState(() {
-  //       paymentMessage = "Payment Cancelled";
-  //     });
-  //     showDialog(
-  //       context: context,
-  //       builder: (_) => const AlertDialog(
-  //         content: Text("Payment Cancelled"),
-  //       ),
-  //     );
-  //   } catch (e) {
-  //     print('Unexpected error: $e');
-  //   }
-  // }
-
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   Stripe.publishableKey =
-  //   '<pk_test_51QZuooF3y7cUPl2iZY5bNioUkzOVwJ1kRiBD7oJEac1UaIONQgDxODmB70lwzKAAkBhlZo46blwlhZCNom3skDjq00OkXHomT6>';
-  //   Stripe.instance.applySettings();
-  // }
   final StripePayment stripePayment = StripePayment();
 
   @override
@@ -320,7 +224,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                       if (success) {
                                         ScaffoldMessenger.of(context)
                                             .showSnackBar(
-                                          SnackBar(
+                                          const SnackBar(
                                               content:
                                                   Text("Payment successful!")),
                                         );
@@ -337,7 +241,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: Colors.orange,
                                   ),
-                                  child: Text(
+                                  child: const Text(
                                     'Pay Now',
                                     style: TextStyle(color: Colors.white),
                                   ),

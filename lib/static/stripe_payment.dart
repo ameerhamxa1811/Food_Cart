@@ -72,7 +72,7 @@ class StripePayment {
       await Stripe.instance.initPaymentSheet(
         paymentSheetParameters: SetupPaymentSheetParameters(
           paymentIntentClientSecret: paymentIntentClientSecret,
-          merchantDisplayName: 'Food Cart', // Customize this
+          merchantDisplayName: 'Food Cart',
         ),
       );
     } catch (e) {
